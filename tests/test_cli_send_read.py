@@ -1,8 +1,7 @@
 import os
 import tempfile
 import unittest
-from pathlib import Path
-from unittest.mock import MagicMock, patch, mock_open
+from unittest.mock import MagicMock, patch
 from click.testing import CliRunner
 
 from agent_forge.cli import main
@@ -51,7 +50,6 @@ class TestCLISend(unittest.TestCase):
         mock_session = MagicMock()
         mock_get_session.return_value = mock_session
 
-        from agent_forge.cli import find_pane
         with patch("agent_forge.cli.find_pane", return_value=None):
             result = self.runner.invoke(main, ["send", "architect", "ls -la"])
             self.assertNotEqual(result.exit_code, 0)

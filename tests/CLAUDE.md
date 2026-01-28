@@ -7,7 +7,9 @@
 
 | ID | Time | T | Title | Read |
 |----|------|---|-------|------|
-| #1886 | 10:37 PM | 🟣 | Phase 3 Controller Runtime fully implemented with all tests passing | ~306 |
+| #1892 | 10:38 PM | 🟣 | Phase 3 Controller Runtime completed with full CLI integration | ~354 |
+| #1890 | 10:37 PM | 🟣 | Phase 3 completed: Controller runtime with full tmux integration | ~311 |
+| #1886 | " | 🟣 | Phase 3 Controller Runtime fully implemented with all tests passing | ~306 |
 | #1885 | " | 🟣 | Phase 3 Controller implementation completed with tmux runtime control | ~374 |
 | #1884 | 10:36 PM | 🟣 | Test suite created for Phase 3 Controller commands (start, send, read) | ~322 |
 | #1882 | " | 🔄 | Test file imports updated to include Path from pathlib | ~135 |

@@ -2,12 +2,32 @@ version: '3'
 
 tasks:
   setup:
-    desc: Install dependencies
+    desc: Install dependencies (including dev)
     cmds:
-      - python3 -m venv venv
-      - . venv/bin/activate && pip install -e .
+      - uv venv
+      - uv pip install -e ".[dev]"
 
   test:
-    desc: Run tests
+    desc: Run tests with pytest
     cmds:
-      - . venv/bin/activate && python3 -m unittest discover tests
+      - uv run pytest tests/
+
+  lint:
+    desc: Check code style with ruff
+    cmds:
+      - uv run ruff check .
+
+  format:
+    desc: Format code with ruff
+    cmds:
+      - uv run ruff check --fix .
+      - uv run ruff format .
+
+  clean:
+    desc: Clean up temporary files
+    cmds:
+      - rm -rf .venv
+      - rm -rf dist
+      - rm -rf *.egg-info
+      - find . -type d -name "__pycache__" -exec rm -rf {} +
+      - find . -type d -name ".pytest_cache" -exec rm -rf {} +

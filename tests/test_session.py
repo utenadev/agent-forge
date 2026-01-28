@@ -1,5 +1,5 @@
 import unittest
-from unittest.mock import MagicMock, patch, call, mock_open
+from unittest.mock import MagicMock, patch, mock_open
 
 from agent_forge.session import get_session, find_pane, start_forge
 

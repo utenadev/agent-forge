@@ -1,6 +1,5 @@
 """Session management for Agent Forge."""
 
-from pathlib import Path
 from typing import Optional
 
 import yaml

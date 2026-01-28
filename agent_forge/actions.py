@@ -1,6 +1,6 @@
 """Communication primitives for interacting with tmux panes."""
 
-from typing import List, Optional
+from typing import List
 
 from libtmux import Pane
 

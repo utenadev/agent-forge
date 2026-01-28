@@ -21,6 +21,7 @@ agent-forge = "agent_forge.cli:main"
 dev = [
     "pytest>=8.0.0",
     "pytest-cov>=4.0.0",
+    "ruff>=0.3.0",
 ]
 
 [build-system]
