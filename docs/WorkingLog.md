@@ -119,3 +119,56 @@ Proactively adding dev dependencies prevents test execution errors and aligns wi
 #### Next Steps
 - Phase 3: Implement session controller with libtmux
 - Implement `forge start` command
+
+---
+
+### Phase 3: Controller Runtime Implementation (TDD Approach)
+
+#### RED Phase
+- Created `tests/test_actions.py` with communication primitives tests:
+  - `send_command` calls `pane.send_keys()`
+  - `read_output` calls `pane.capture_pane()` with correct parameters
+- Created `tests/test_session.py` with session manager tests:
+  - `get_session` - Find session by name using mock Server
+  - `find_pane` - Find pane by window name (case-insensitive)
+  - `start_forge` - Load workspace with WorkspaceBuilder
+- Created `tests/test_cli_send_read.py` with CLI integration tests:
+  - `send` command integration with session/actions modules
+  - `read` command integration with session/actions modules
+  - `start` command integration with session module
+- Ran tests: FAILED - `ModuleNotFoundError: No module named 'agent_forge.actions'`
+
+#### GREEN Phase
+- Implemented `agent_forge/actions.py`:
+  - `send_command(pane, cmd)` - Wrapper for `pane.send_keys()`
+  - `read_output(pane, lines)` - Wrapper for `pane.capture_pane()`
+- Implemented `agent_forge/session.py`:
+  - `get_session(session_name)` - Get active tmux session by name
+  - `find_pane(session, target_name)` - Find pane by window name (case-insensitive)
+  - `start_forge(config_path, session_name, attach)` - Start session from config using WorkspaceBuilder
+- Updated `agent_forge/cli.py`:
+  - `start` - Integrated with session module, config validation
+  - `send` - Integrated with session/actions modules, error handling
+  - `read` - Integrated with session/actions modules, output formatting
+  - `list` - List active sessions and panes using libtmux.Server
+- Ran tests: **OK - All 44 tests passed**
+
+#### Files Created
+- `agent_forge/actions.py` - Communication primitives (2 functions)
+- `agent_forge/session.py` - Session management (3 functions)
+- `tests/test_actions.py` - Actions tests (5 tests)
+- `tests/test_session.py` - Session tests (6 tests)
+- `tests/test_cli_send_read.py` - CLI integration tests (7 tests)
+
+#### Files Modified
+- `agent_forge/cli.py` - Integrated start/send/read/list commands with session/actions
+
+#### Test Results
+```
+============================== 44 passed in 0.20s ===============================
+```
+
+#### Next Steps
+- Phase 4: Enhance CLI commands (better error handling, options)
+- Phase 5: Agent Skills (MCP tool definitions)
+- Phase 6: Testing & Polish
