@@ -71,3 +71,51 @@
 
 #### Rationale
 Proactively adding dev dependencies prevents test execution errors and aligns with standard Python project practices.
+
+---
+
+### Phase 2: Forge Generator Implementation (TDD Approach)
+
+#### RED Phase
+- Created `tests/test_config.py` with config module tests:
+  - Constants test (FORGE_CONFIG_FILE, DEFAULT_FORGE_CONFIG)
+  - Config existence checks
+  - Write default config behavior
+  - Load YAML config
+  - Default config structure validation (3 panes: architect, implementer, reviewer)
+- Created `tests/test_cli_init.py` with CLI init command tests:
+  - Creates .forge.yaml file
+  - Shows success message
+  - Fails if config exists
+  - Supports --force flag for overwrite
+- Ran tests: FAILED - `ModuleNotFoundError: No module named 'agent_forge.config'`
+
+#### GREEN Phase
+- Implemented `agent_forge/config.py`:
+  - `FORGE_CONFIG_FILE = ".forge.yaml"` constant
+  - `DEFAULT_FORGE_CONFIG` - YAML template with 3-pane layout
+  - `config_exists(directory)` - Check if config file exists
+  - `load_config(directory)` - Load YAML config
+  - `write_default_config(directory, overwrite)` - Write default template
+- Updated `agent_forge/cli.py` init command:
+  - Added `--force` option for overwrite
+  - Check if config exists before writing
+  - Show appropriate error/success messages
+- Ran tests: **OK - All 24 tests passed**
+
+#### Files Created
+- `agent_forge/config.py` - Configuration management module
+- `tests/test_config.py` - Config module tests (12 tests)
+- `tests/test_cli_init.py` - CLI init command tests (4 tests)
+
+#### Files Modified
+- `agent_forge/cli.py` - Updated init command with config integration
+
+#### Test Results
+```
+============================== 24 passed in 0.15s ===============================
+```
+
+#### Next Steps
+- Phase 3: Implement session controller with libtmux
+- Implement `forge start` command

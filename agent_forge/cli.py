@@ -1,6 +1,7 @@
 import click
 
 from agent_forge import __version__
+from agent_forge.config import FORGE_CONFIG_FILE, config_exists, write_default_config
 
 
 @click.group()
@@ -11,9 +12,20 @@ def main():
 
 
 @main.command()
-def init():
+@click.option("--force", is_flag=True, help="Overwrite existing config file")
+def init(force):
     """Initialize a new Forge workspace."""
-    click.echo("Initializing Forge workspace...")
+    if config_exists() and not force:
+        click.echo(f"Error: {FORGE_CONFIG_FILE} already exists. Use --force to overwrite.")
+        raise click.Abort()
+
+    overwrite = force
+    try:
+        write_default_config(overwrite=overwrite)
+        click.echo(f"Created {FORGE_CONFIG_FILE}")
+    except FileExistsError as e:
+        click.echo(f"Error: {e}")
+        raise click.Abort()
 
 
 @main.command()

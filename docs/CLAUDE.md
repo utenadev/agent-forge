@@ -7,6 +7,7 @@
 
 | ID | Time | T | Title | Read |
 |----|------|---|-------|------|
+| #1849 | 10:18 PM | 🟣 | Development environment improved with pytest dependency group | ~203 |
 | #1848 | 10:17 PM | 🟣 | Dynamic version management implemented with tests | ~267 |
 | #1841 | 10:14 PM | 🟣 | Version management implemented with TDD approach | ~243 |
 | #1840 | " | 🔵 | WorkingLog.md documents Phase 1 TDD implementation | ~295 |
