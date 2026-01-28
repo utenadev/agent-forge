@@ -1,0 +1,22 @@
+[project]
+name = "agent-forge"
+version = "0.1.0"
+description = "Orchestrate AI agents in tmux with Shogun style."
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [
+    {name = "utenadev"}
+]
+dependencies = [
+    "tmuxp>=1.27.0",
+    "libtmux>=0.23.0",
+    "click>=8.0.0"
+]
+
+[project.scripts]
+agent-forge = "agent_forge.cli:main"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"

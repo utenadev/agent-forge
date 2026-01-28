@@ -1,0 +1,13 @@
+version: '3'
+
+tasks:
+  setup:
+    desc: Install dependencies
+    cmds:
+      - python3 -m venv venv
+      - . venv/bin/activate && pip install -e .
+
+  test:
+    desc: Run tests
+    cmds:
+      - . venv/bin/activate && python3 -m unittest discover tests
