@@ -17,6 +17,12 @@ dependencies = [
 [project.scripts]
 agent-forge = "agent_forge.cli:main"
 
+[dependency-groups]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-cov>=4.0.0",
+]
+
 [build-system]
 requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"

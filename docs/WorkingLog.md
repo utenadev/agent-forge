@@ -58,3 +58,16 @@
 - `agent_forge/__init__.py` - Added __version__ export
 - `agent_forge/cli.py` - Use dynamic version import
 - `tests/test_version.py` - Version validation tests
+
+---
+
+### Development Environment Improvements (Based on Review Feedback)
+
+#### Changes
+- Added `[dependency-groups]` to `pyproject.toml` with dev dependencies:
+  - `pytest>=8.0.0` - Testing framework
+  - `pytest-cov>=4.0.0` - Coverage reporting
+- Installed pytest and verified all tests pass
+
+#### Rationale
+Proactively adding dev dependencies prevents test execution errors and aligns with standard Python project practices.
