@@ -172,3 +172,80 @@ Proactively adding dev dependencies prevents test execution errors and aligns wi
 - Phase 4: Enhance CLI commands (better error handling, options)
 - Phase 5: Agent Skills (MCP tool definitions)
 - Phase 6: Testing & Polish
+
+---
+
+### Phase 3: コントローラーランタイム実装 (TDDアプローチ) (Claude)
+
+#### REDフェーズ
+- 通信プリミティブのテスト `tests/test_actions.py` を作成:
+  - `send_command` が `pane.send_keys()` を呼ぶことを確認
+  - `read_output` が `pane.capture_pane()` を正しいパラメータで呼ぶことを確認
+- セッションマネージャーのテスト `tests/test_session.py` を作成:
+  - `get_session` - モック Server を使ったセッション名検索
+  - `find_pane` - ウィンドウ名によるペイン検索（大文字小文字区別なし）
+  - `start_forge` - WorkspaceBuilder でのワークスペース読み込み
+- CLI統合テスト `tests/test_cli_send_read.py` を作成:
+  - `send` コマンドの session/actions モジュール統合
+  - `read` コマンドの session/actions モジュール統合
+  - `start` コマンドの session モジュール統合
+- テスト実行: **失敗** - `ModuleNotFoundError: No module named 'agent_forge.actions'`
+
+#### GREENフェーズ
+- `agent_forge/actions.py` を実装:
+  - `send_command(pane, cmd)` - `pane.send_keys()` のラッパー
+  - `read_output(pane, lines)` - `pane.capture_pane()` のラッパー
+- `agent_forge/session.py` を実装:
+  - `get_session(session_name)` - 名前でアクティブな tmux セッションを取得
+  - `find_pane(session, target_name)` - ウィンドウ名でペイン検索（大文字小文字区別なし）
+  - `start_forge(config_path, session_name, attach)` - WorkspaceBuilder でセッション起動
+- `agent_forge/cli.py` を更新:
+  - `start` - session モジュール統合、設定検証
+  - `send` - session/actions モジュール統合、エラーハンドリング
+  - `read` - session/actions モジュール統合、出力フォーマット
+  - `list` - libtmux.Server でアクティブセッション一覧
+- テスト実行: **成功 - 全44テストパス**
+
+#### 作成ファイル
+- `agent_forge/actions.py` - 通信プリミティブ（2関数）
+- `agent_forge/session.py` - セッション管理（3関数）
+- `tests/test_actions.py` - Actions テスト（5テスト）
+- `tests/test_session.py` - Session テスト（6テスト）
+- `tests/test_cli_send_read.py` - CLI統合テスト（7テスト）
+
+#### 変更ファイル
+- `agent_forge/cli.py` - start/send/read/list コマンドを session/actions と統合
+
+#### テスト結果
+```
+============================== 44 passed in 0.20s ===============================
+```
+
+#### 次のステップ
+- Phase 4: CLIコマンドの拡張（エラーハンドリング、オプション追加）
+- Phase 5: Agent Skills（MCPツール定義）
+- Phase 6: テストと洗練
+
+---
+
+### CI & リリースエンジニアリング (Gemini)
+
+#### 変更点
+- **CIワークフローの作成**: `.github/workflows/test.yml` を作成
+  - Ubuntu環境 (Python 3.10-3.13) での pytest 実行を定義
+  - main ブランチへのプッシュおよび PR でトリガー
+- **Taskfileの作成**: `Taskfile.yml` を整備
+  - `setup`: 依存関係のインストール
+  - `test`: テスト実行
+  - `lint`: ruff による静的解析
+  - `format`: ruff によるコード整形
+  - `clean`: 一時ファイルの削除
+- **依存関係の更新**: `pyproject.toml` に `ruff` を追加 (dev group)
+- **ドキュメント整備**:
+  - `README.ja.md` (日本語版README)
+  - `docs/CONTRIBUTING.md` (開発者ガイド)
+  - `docs/ARCHITECTURE.md` (アーキテクチャ図)
+  - `LICENSE` (MIT)
+- **リリース**:
+  - Phase 3 の実装をマージ
+  - `v0.1.0` タグを作成
