@@ -37,3 +37,24 @@
 #### Next Steps
 - Phase 2: Implement `forge init` command (template generation)
 - Phase 3: Implement session controller with libtmux
+
+---
+
+### Version Management Implementation
+
+#### RED Phase
+- Created `tests/test_version.py` with version tests:
+  - `test_version_is_defined` - Verify __version__ exists
+  - `test_version_format` - Verify semantic versioning format
+- Ran tests: FAILED - `ImportError: cannot import name '__version__'`
+
+#### GREEN Phase
+- Added `__version__ = "0.1.0"` to `agent_forge/__init__.py`
+- Modified `agent_forge/cli.py` to import and use `__version__` dynamically
+- Replaced hardcoded version in `@click.version_option()`
+- Ran tests: **OK - All 8 tests passed**
+
+#### Files Modified
+- `agent_forge/__init__.py` - Added __version__ export
+- `agent_forge/cli.py` - Use dynamic version import
+- `tests/test_version.py` - Version validation tests

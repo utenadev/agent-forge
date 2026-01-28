@@ -7,6 +7,8 @@
 
 | ID | Time | T | Title | Read |
 |----|------|---|-------|------|
+| #1836 | 10:13 PM | 🟣 | Test suite created for version export validation | ~205 |
+| #1829 | 10:08 PM | 🟣 | Phase 1 CLI implementation completed with TDD approach | ~224 |
 | #1821 | 10:05 PM | 🟣 | Test suite created for CLI using TDD red-green approach | ~234 |
 | #1820 | " | 🟣 | CLI implementation completed with all basic commands passing tests | ~210 |
 | #1819 | 10:04 PM | 🔄 | Modified test assertion to check for separate keywords | ~176 |

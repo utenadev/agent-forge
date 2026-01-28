@@ -7,6 +7,9 @@
 
 | ID | Time | T | Title | Read |
 |----|------|---|-------|------|
+| #1837 | 10:14 PM | 🟣 | Package version exported from __init__.py | ~175 |
+| #1835 | 10:13 PM | 🔵 | CLI implementation uses click group with placeholder commands | ~262 |
+| #1829 | 10:08 PM | 🟣 | Phase 1 CLI implementation completed with TDD approach | ~224 |
 | #1822 | 10:05 PM | 🟣 | CLI base implementation created with all five core commands | ~296 |
 | #1820 | " | 🟣 | CLI implementation completed with all basic commands passing tests | ~210 |
 | #1809 | 9:46 PM | 🔵 | Agent Forge package is completely empty | ~107 |

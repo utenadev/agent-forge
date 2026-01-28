@@ -1,8 +1,10 @@
 import click
 
+from agent_forge import __version__
+
 
 @click.group()
-@click.version_option(version="0.1.0")
+@click.version_option(version=__version__)
 def main():
     """Agent Forge - Orchestrate AI agents in tmux with Shogun style."""
     pass
