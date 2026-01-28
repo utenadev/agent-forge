@@ -14,19 +14,21 @@ The core innovation is the **Forge Link protocol** enabling agent collaboration 
 ## Common Development Commands
 
 ```bash
-# Setup (creates venv and installs dependencies in editable mode)
-task setup
+# Setup with uv (recommended)
+uv venv
+uv pip install -e .
 
 # Run tests
-task test
+uv run python3 -m unittest discover tests -v
+
+# Run CLI
+uv run agent-forge --help
 ```
 
-Without Taskfile:
+With Taskfile:
 ```bash
-python3 -m venv venv
-source venv/bin/activate
-pip install -e .
-python3 -m unittest discover tests
+task setup  # Creates venv and installs dependencies
+task test   # Runs tests
 ```
 
 ## Architecture
@@ -60,11 +62,86 @@ Agents collaborate in specialized tmux panes:
 - `read <target>` - Capture output from target pane
 - `list` - Display active sessions and panes
 
+## Development Workflow
+
+### TDD Approach (Red-Green-Refactor)
+
+Follow t_wada's TDD style:
+
+1. **Write failing test first (RED)**
+   - Create/update test file in `tests/`
+   - Run tests to confirm failure
+
+2. **Implement minimal code to pass (GREEN)**
+   - Write just enough code to make tests pass
+   - Run tests to confirm success
+
+3. **Commit after each GREEN**
+   - Use conventional commit format
+   - Update `docs/WorkingLog.md` with progress
+
+### Development Steps
+
+```bash
+# 1. Create feature branch
+git checkout -b feature/<name>
+
+# 2. Write test (RED)
+# Create tests/test_<feature>.py
+
+# 3. Run tests - expect failure
+uv run python3 -m unittest discover tests -v
+
+# 4. Implement (GREEN)
+# Create agent_forge/<feature>.py
+
+# 5. Run tests - expect success
+uv run python3 -m unittest discover tests -v
+
+# 6. Update WorkingLog
+# Edit docs/WorkingLog.md
+
+# 7. Commit
+git add .
+git commit -m "feat: description
+
+Co-Authored-By: Claude (GLM-4.7) <noreply@anthropic.com>"
+```
+
+### Commit Message Format
+
+```
+<type>: <description>
+
+<optional detailed description>
+
+Co-Authored-By: Claude (GLM-4.7) <noreply@anthropic.com>
+```
+
+Types: `feat`, `fix`, `test`, `docs`, `refactor`, `chore`
+
+### Language Convention
+
+- **Communication**: Japanese (with user)
+- **Source code comments**: English
+- **Commit messages**: English
+- **Documentation**: English (unless Japanese-specific like PLAN.md)
+
 ## Implementation Status
 
-**Current Phase**: Phase 1 - Skeleton & CLI Base
+| Phase | Description | Status |
+|-------|-------------|--------|
+| 1 | CLI Base | ✅ Completed - Basic command structure with tests |
+| 2 | Forge Generator (init) | 🚧 In Progress |
+| 3 | Controller (Runtime) | ⏳ Pending |
+| 4 | CLI Commands | ⏳ Pending |
+| 5 | Agent Skills | ⏳ Pending |
+| 6 | Testing & Polish | ⏳ Pending |
 
-The project is in early planning phase. The structure is established but implementation has not begun.
+### Completed
+- Phase 1: CLI base with 5 commands (init, start, send, read, list)
+- Test suite with 6 passing tests
+- Project structure and documentation
 
 ## Technical Stack
 
