@@ -7,7 +7,9 @@
 
 | ID | Time | T | Title | Read |
 |----|------|---|-------|------|
-| #1858 | 10:23 PM | 🟣 | Phase 2 implementation completed with 24 tests passing | ~361 |
+| #1863 | 10:23 PM | 🟣 | Phase 2 Forge Generator completed with init command implementation | ~321 |
+| #1860 | " | 🟣 | Phase 2 completed: Forge generator with config management | ~369 |
+| #1858 | " | 🟣 | Phase 2 implementation completed with 24 tests passing | ~361 |
 | #1857 | 10:22 PM | 🟣 | forge init command implemented with .forge.yaml template generation | ~253 |
 | #1855 | " | 🟣 | Phase 2 RED phase: init command tests created | ~277 |
 | #1854 | " | 🟣 | Configuration module implemented with all tests passing | ~281 |

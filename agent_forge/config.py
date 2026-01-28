@@ -1,6 +1,7 @@
 """Configuration management for Agent Forge."""
 
 from pathlib import Path
+import yaml
 
 FORGE_CONFIG_FILE = ".forge.yaml"
 
@@ -46,8 +47,6 @@ def load_config(directory: str = "."):
 
     Returns None if config does not exist.
     """
-    import yaml
-
     config_path = get_config_path(directory)
     if not config_path.exists():
         return None
