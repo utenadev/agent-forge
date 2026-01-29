@@ -73,3 +73,18 @@ def start_forge(
 
     # Return the created session
     return server.find_where({"session_name": config["session_name"]})
+
+
+def stop_session(session_name: str) -> Optional[Session]:
+    """Stop a tmux session by name.
+
+    Args:
+        session_name: Name of the session to stop
+
+    Returns:
+        Session object if found and stopped, None if not found
+    """
+    session = get_session(session_name)
+    if session:
+        session.kill()
+    return session

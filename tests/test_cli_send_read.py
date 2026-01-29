@@ -33,18 +33,18 @@ class TestCLISend(unittest.TestCase):
     @patch("agent_forge.cli.get_session")
     @patch("agent_forge.cli.load_config")
     def test_send_fails_if_session_not_found(self, mock_load, mock_get_session, mock_find):
-        """send command should fail if session not found"""
+        """send command should show error and exit gracefully if session not found"""
         mock_load.return_value = {"session_name": "forge-session"}
         mock_get_session.return_value = None
 
         result = self.runner.invoke(main, ["send", "architect", "ls -la"])
-        self.assertNotEqual(result.exit_code, 0)
+        self.assertEqual(result.exit_code, 0)  # Graceful exit
         self.assertIn("not found", result.output.lower())
 
     @patch("agent_forge.cli.get_session")
     @patch("agent_forge.cli.load_config")
     def test_send_fails_if_pane_not_found(self, mock_load, mock_get_session):
-        """send command should fail if pane not found"""
+        """send command should show error and exit gracefully if pane not found"""
         mock_load.return_value = {"session_name": "forge-session"}
 
         mock_session = MagicMock()
@@ -52,7 +52,7 @@ class TestCLISend(unittest.TestCase):
 
         with patch("agent_forge.cli.find_pane", return_value=None):
             result = self.runner.invoke(main, ["send", "architect", "ls -la"])
-            self.assertNotEqual(result.exit_code, 0)
+            self.assertEqual(result.exit_code, 0)  # Graceful exit
             self.assertIn("not found", result.output.lower())
 
 

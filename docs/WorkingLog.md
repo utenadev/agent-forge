@@ -249,3 +249,70 @@ Proactively adding dev dependencies prevents test execution errors and aligns wi
 - **リリース**:
   - Phase 3 の実装をマージ
   - `v0.1.0` タグを作成
+
+---
+
+## 2026-01-29
+
+### Phase 4: CLI の強化と品質向上 (TDDアプローチ)
+
+#### REDフェーズ
+- `tests/test_stop.py` で stop コマンドのテストを作成:
+  - `stop_session` がセッションを kill することを確認
+  - セッションが存在しない場合に None を返すことを確認
+  - CLI stop コマンドの設定ファイル検証
+  - `--session-name` オプションの動作確認
+- `tests/test_error_handling.py` でエラーハンドリング改善のテストを作成:
+  - send コマンドでターゲットが見つからない場合に利用可能なペインを表示
+  - read コマンドで同様のエラーハンドリング
+- `tests/e2e/test_live_tmux.py` で E2E テストを作成:
+  - 実際の tmux サーバーを使用した統合テスト
+  - セッション作成、コマンド送信、出力読み取り、セッション停止の完全なワークフロー
+- テスト実行: **失敗** - 実装前の期待値
+
+#### GREENフェーズ
+- `agent_forge/session.py` に `stop_session` 関数を実装:
+  - セッションの検索と `kill()` による終了
+  - 非推奨の `kill_session()` から `kill()` に更新
+- `agent_forge/cli.py` に stop コマンドを実装:
+  - `--session-name` オプションでセッション名をオーバーライド可能
+  - 設定ファイルが存在しない場合のエラーハンドリング
+  - セッションが見つからない場合の穏やかな終了
+- エラーハンドリングの改善:
+  - `get_available_panes()` ヘルパー関数を追加
+  - send/read コマンドでターゲットが見つからない場合に利用可能なペイン一覧を表示
+  - `click.Abort()` から `return 1`/`return 0` による終了コード制御に変更
+- E2E テストの実装:
+  - libtmux を直接使用して tmux セッションを作成
+  - tmuxp の設定形式の問題を回避
+  - send/read/stop の完全な統合テスト
+- 既存テストの更新:
+  - `test_send_fails_if_*` を新しいエラーハンドリング動作に合わせて更新
+  - `test_stop_session_kills_session` を `kill()` メソッド呼び出しに更新
+- テスト実行: **成功 - 全54テストパス**
+
+#### 作成ファイル
+- `tests/test_stop.py` - Stop コマンドと stop_session のテスト（6テスト）
+- `tests/test_error_handling.py` - エラーハンドリング改善のテスト（2テスト）
+- `tests/e2e/__init__.py` - E2E テストパッケージ
+- `tests/e2e/test_live_tmux.py` - ライブ tmux を使用した E2E テスト（2テスト）
+
+#### 変更ファイル
+- `agent_forge/session.py` - `stop_session()` 関数を追加、`kill_session()` を `kill()` に更新
+- `agent_forge/cli.py` - stop コマンド実装、エラーハンドリング改善
+- `tests/test_cli_send_read.py` - 新しいエラーハンドリング動作に合わせて更新
+
+#### テスト結果
+```
+============================== 54 passed in 0.75s ===============================
+```
+
+#### 実装内容
+1. **forge stop コマンド**: アクティブな Forge セッションを安全に終了
+2. **エラーハンドリング改善**: ターゲットが見つからない場合に利用可能なペインを表示
+3. **E2E テスト**: 実際の tmux サーバーを使用した統合テスト
+
+#### 次のステップ
+- Phase 5: Agent Skills（MCPツール定義）
+- Phase 6: テストと洗練
+
