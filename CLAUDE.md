@@ -16,10 +16,13 @@ The core innovation is the **Forge Link protocol** enabling agent collaboration 
 ```bash
 # Setup with uv (recommended)
 uv venv
-uv pip install -e .
+uv pip install -e ".[dev]"
 
 # Run tests
-uv run python3 -m unittest discover tests -v
+uv run pytest tests/ -v
+
+# Run lint
+uv run ruff check .
 
 # Run CLI
 uv run agent-forge --help
@@ -29,6 +32,8 @@ With Taskfile:
 ```bash
 task setup  # Creates venv and installs dependencies
 task test   # Runs tests
+task lint   # Runs ruff
+task format # Formats code with ruff
 ```
 
 ## Architecture
@@ -54,14 +59,6 @@ Agents collaborate in specialized tmux panes:
 3. **Orchestration**: User (Shogun) dispatches goals; agents coordinate via `forge` CLI
 4. **Termination**: `forge stop` safely shuts down session
 
-### Planned CLI Commands
-
-- `init` - Create scaffold `.forge.yaml`
-- `start` - Launch tmux session
-- `send <target> "<command>"` - Send keys to target pane
-- `read <target>` - Capture output from target pane
-- `list` - Display active sessions and panes
-
 ## Development Workflow
 
 ### TDD Approach (Red-Green-Refactor)
@@ -80,46 +77,6 @@ Follow t_wada's TDD style:
    - Use conventional commit format
    - Update `docs/WorkingLog.md` with progress
 
-### Development Steps
-
-```bash
-# 1. Create feature branch
-git checkout -b feature/<name>
-
-# 2. Write test (RED)
-# Create tests/test_<feature>.py
-
-# 3. Run tests - expect failure
-uv run python3 -m unittest discover tests -v
-
-# 4. Implement (GREEN)
-# Create agent_forge/<feature>.py
-
-# 5. Run tests - expect success
-uv run python3 -m unittest discover tests -v
-
-# 6. Update WorkingLog
-# Edit docs/WorkingLog.md
-
-# 7. Commit
-git add .
-git commit -m "feat: description
-
-Co-Authored-By: Claude (GLM-4.7) <noreply@anthropic.com>"
-```
-
-### Commit Message Format
-
-```
-<type>: <description>
-
-<optional detailed description>
-
-Co-Authored-By: Claude (GLM-4.7) <noreply@anthropic.com>
-```
-
-Types: `feat`, `fix`, `test`, `docs`, `refactor`, `chore`
-
 ### Language Convention
 
 - **Communication**: Japanese (with user)
@@ -131,31 +88,30 @@ Types: `feat`, `fix`, `test`, `docs`, `refactor`, `chore`
 
 | Phase | Description | Status |
 |-------|-------------|--------|
-| 1 | CLI Base | ✅ Completed - Basic command structure with tests |
-| 2 | Forge Generator (init) | 🚧 In Progress |
-| 3 | Controller (Runtime) | ⏳ Pending |
-| 4 | CLI Commands | ⏳ Pending |
-| 5 | Agent Skills | ⏳ Pending |
+| 1 | CLI Base | ✅ Completed |
+| 2 | Forge Generator (init) | ✅ Completed |
+| 3 | Controller (Runtime) | ✅ Completed |
+| 4 | CLI Commands & Quality | 🚧 In Progress |
+| 5 | Agent Guide | ⏳ Pending |
 | 6 | Testing & Polish | ⏳ Pending |
 
-### Completed
-- Phase 1: CLI base with 5 commands (init, start, send, read, list)
-- Test suite with 6 passing tests
-- Project structure and documentation
+### Current Focus: Phase 4 (CLI Enhancements)
+
+**Detailed Instructions**: Refer to **`docs/PHASE4_INSTRUCTIONS.md`**.
+
+**Key Objectives:**
+1. **`forge stop` implementation**: Add command to kill the active session.
+2. **Error Handling**: Improve feedback (e.g., list available panes if target not found).
+3. **E2E Testing**: Add `tests/e2e/test_live_tmux.py` for real-world validation.
 
 ## Technical Stack
 
 - **Python**: 3.10+
-- **Core Dependencies**: `tmuxp` (session management), `libtmux` (tmux control)
-- **CLI Framework**: `click` (entry point: `agent_forge.cli:main`)
-- **Build Tools**: `Taskfile.yml` (go-task), `pyproject.toml` (setuptools)
+- **Core Dependencies**: `tmuxp`, `libtmux`
+- **CLI Framework**: `click`
+- **Build Tools**: `uv`, `Taskfile.yml`, `pyproject.toml`
+- **Linting**: `ruff`
 
 ## Key Design Philosophy
 
-**Specification Driven Development (SDD)**: Agents exchange context via files, not chat bubbles. Large context is passed through the shared file system as "payload", while `forge send/read` handles real-time interaction.
-
-## Documentation References
-
-- `docs/FORGE_BLUEPRINT.md` - Complete protocol definition
-- `docs/PLAN.md` - Detailed implementation phases (Japanese)
-- `docs/FORGE_RESOURCES.md` - References and inspirations
+**Specification Driven Development (SDD)**: Agents exchange context via files. `forge send/read` handles real-time interaction, while large data moves through the file system.
