@@ -2,190 +2,137 @@
 
 ## 2026-01-28
 
-### Phase 1: CLI Base Implementation (TDD Approach)
+### Phase 1: CLI ベース実装 (TDDアプローチ)
 
-#### Setup
-- Created feature branch: `feature/cli-base`
-- Installed dependencies via `uv pip install -e .`
-- Added `click>=8.0.0` to pyproject.toml dependencies
+#### セットアップ
+- フィーチャーブランチを作成: `feature/cli-base`
+- `uv pip install -e .` で依存関係をインストール
+- `click>=8.0.0` を pyproject.toml の依存関係に追加
 
-#### RED Phase
-- Created `tests/test_cli.py` with test cases for all CLI commands:
-  - `test_cli_main_exists` - Verify main entry point
-  - `test_init_command_exists` - Verify init command
-  - `test_start_command_exists` - Verify start command
-  - `test_send_command_exists` - Verify send command
-  - `test_read_command_exists` - Verify read command
-  - `test_list_command_exists` - Verify list command
-- Ran tests: FAILED (Expected RED) - `ModuleNotFoundError: No module named 'agent_forge.cli'`
+#### REDフェーズ
+- すべての CLI コマンドのテストケースを含む `tests/test_cli.py` を作成:
+  - `test_cli_main_exists` - メインエントリーポイントを検証
+  - `test_init_command_exists` - init コマンドを検証
+  - `test_start_command_exists` - start コマンドを検証
+  - `test_send_command_exists` - send コマンドを検証
+  - `test_read_command_exists` - read コマンドを検証
+  - `test_list_command_exists` - list コマンドを検証
+- テスト実行: **失敗（想定通り RED）** - `ModuleNotFoundError: No module named 'agent_forge.cli'`
 
-#### GREEN Phase
-- Implemented `agent_forge/cli.py` with Click-based CLI:
-  - `main()` - Entry point with version option
-  - `init()` - Initialize Forge workspace
-  - `start()` - Start Forge tmux session
-  - `send(target, message)` - Send command to target pane
-  - `read(target)` - Read output from target pane
-  - `list()` - List active sessions and panes
-- Fixed test assertion for main command (hyphen vs space issue)
-- Ran tests: **OK - All 6 tests passed**
+#### GREENフェーズ
+- Click ベースの CLI で `agent_forge/cli.py` を実装:
+  - `main()` - バージョンオプション付きのエントリーポイント
+  - `init()` - Forge ワークスペースの初期化
+  - `start()` - Forge tmux セッションの開始
+  - `send(target, message)` - ターゲットペインにコマンドを送信
+  - `read(target)` - ターゲットペインから出力を読み取り
+  - `list()` - アクティブなセッションとペインを一覧表示
+- メインコマンドのテストアサーションを修正（ハイフン vs スペースの問題）
+- テスト実行: **成功 - 全6テストパス**
 
-#### Files Created
-- `agent_forge/cli.py` - CLI implementation with Click
-- `tests/test_cli.py` - Unit tests for CLI commands
+#### 作成ファイル
+- `agent_forge/cli.py` - Click による CLI 実装
+- `tests/test_cli.py` - CLI コマンドのユニットテスト
 
-#### Next Steps
-- Phase 2: Implement `forge init` command (template generation)
-- Phase 3: Implement session controller with libtmux
-
----
-
-### Version Management Implementation
-
-#### RED Phase
-- Created `tests/test_version.py` with version tests:
-  - `test_version_is_defined` - Verify __version__ exists
-  - `test_version_format` - Verify semantic versioning format
-- Ran tests: FAILED - `ImportError: cannot import name '__version__'`
-
-#### GREEN Phase
-- Added `__version__ = "0.1.0"` to `agent_forge/__init__.py`
-- Modified `agent_forge/cli.py` to import and use `__version__` dynamically
-- Replaced hardcoded version in `@click.version_option()`
-- Ran tests: **OK - All 8 tests passed**
-
-#### Files Modified
-- `agent_forge/__init__.py` - Added __version__ export
-- `agent_forge/cli.py` - Use dynamic version import
-- `tests/test_version.py` - Version validation tests
+#### 次のステップ
+- Phase 2: `forge init` コマンドの実装（テンプレート生成）
+- Phase 3: libtmux によるセッションコントローラーの実装
 
 ---
 
-### Development Environment Improvements (Based on Review Feedback)
+### バージョン管理の実装
 
-#### Changes
-- Added `[dependency-groups]` to `pyproject.toml` with dev dependencies:
-  - `pytest>=8.0.0` - Testing framework
-  - `pytest-cov>=4.0.0` - Coverage reporting
-- Installed pytest and verified all tests pass
+#### REDフェーズ
+- バージョンテストを含む `tests/test_version.py` を作成:
+  - `test_version_is_defined` - `__version__` が存在することを検証
+  - `test_version_format` - セマンティックバージョニング形式を検証
+- テスト実行: **失敗** - `ImportError: cannot import name '__version__'`
 
-#### Rationale
-Proactively adding dev dependencies prevents test execution errors and aligns with standard Python project practices.
+#### GREENフェーズ
+- `__version__ = "0.1.0"` を `agent_forge/__init__.py` に追加
+- `__version__` を動的にインポートして使用するように `agent_forge/cli.py` を修正
+- `@click.version_option()` のハードコードされたバージョンを置換
+- テスト実行: **成功 - 全8テストパス**
+
+#### 変更ファイル
+- `agent_forge/__init__.py` - `__version__` をエクスポート
+- `agent_forge/cli.py` - 動的バージョンインポートを使用
+- `tests/test_version.py` - バージョン検証テスト
 
 ---
 
-### Phase 2: Forge Generator Implementation (TDD Approach)
+### 開発環境の改善（レビューフィードバックに基づく）
 
-#### RED Phase
-- Created `tests/test_config.py` with config module tests:
-  - Constants test (FORGE_CONFIG_FILE, DEFAULT_FORGE_CONFIG)
-  - Config existence checks
-  - Write default config behavior
-  - Load YAML config
-  - Default config structure validation (3 panes: architect, implementer, reviewer)
-- Created `tests/test_cli_init.py` with CLI init command tests:
-  - Creates .forge.yaml file
-  - Shows success message
-  - Fails if config exists
-  - Supports --force flag for overwrite
-- Ran tests: FAILED - `ModuleNotFoundError: No module named 'agent_forge.config'`
+#### 変更点
+- `pyproject.toml` に `[dependency-groups]` を追加、dev 依存関係を含む:
+  - `pytest>=8.0.0` - テストフレームワーク
+  - `pytest-cov>=4.0.0` - カバレッジレポート
+- pytest をインストールし、すべてのテストがパスすることを確認
 
-#### GREEN Phase
-- Implemented `agent_forge/config.py`:
-  - `FORGE_CONFIG_FILE = ".forge.yaml"` constant
-  - `DEFAULT_FORGE_CONFIG` - YAML template with 3-pane layout
-  - `config_exists(directory)` - Check if config file exists
-  - `load_config(directory)` - Load YAML config
-  - `write_default_config(directory, overwrite)` - Write default template
-- Updated `agent_forge/cli.py` init command:
-  - Added `--force` option for overwrite
-  - Check if config exists before writing
-  - Show appropriate error/success messages
-- Ran tests: **OK - All 24 tests passed**
+#### 理由
+開発依存関係を先行的に追加することで、テスト実行エラーを防ぎ、標準的な Python プロジェクトの慣行に合わせる。
 
-#### Files Created
-- `agent_forge/config.py` - Configuration management module
-- `tests/test_config.py` - Config module tests (12 tests)
-- `tests/test_cli_init.py` - CLI init command tests (4 tests)
+---
 
-#### Files Modified
-- `agent_forge/cli.py` - Updated init command with config integration
+### Phase 2: Forge ジェネレーターの実装 (TDDアプローチ)
 
-#### Test Results
+#### REDフェーズ
+- config モジュールのテストを含む `tests/test_config.py` を作成:
+  - 定数テスト (FORGE_CONFIG_FILE, DEFAULT_FORGE_CONFIG)
+  - 設定ファイルの存在確認
+  - デフォルト設定の書き込み動作
+  - YAML 設定の読み込み
+  - デフォルト設定構造の検証（3ペイン: architect, implementer, reviewer）
+- CLI init コマンドのテストを含む `tests/test_cli_init.py` を作成:
+  - .forge.yaml ファイルを作成
+  - 成功メッセージを表示
+  - 設定が存在する場合は失敗
+  - 上書き用の --force フラグをサポート
+- テスト実行: **失敗** - `ModuleNotFoundError: No module named 'agent_forge.config'`
+
+#### GREENフェーズ
+- `agent_forge/config.py` を実装:
+  - `FORGE_CONFIG_FILE = ".forge.yaml"` 定数
+  - `DEFAULT_FORGE_CONFIG` - 3ペインレイアウトの YAML テンプレート
+  - `config_exists(directory)` - 設定ファイルが存在するか確認
+  - `load_config(directory)` - YAML 設定を読み込み
+  - `write_default_config(directory, overwrite)` - デフォルトテンプレートを書き込み
+- `agent_forge/cli.py` の init コマンドを更新:
+  - 上書き用の `--force` オプションを追加
+  - 書き込み前に設定が存在するか確認
+  - 適切なエラー/成功メッセージを表示
+- テスト実行: **成功 - 全24テストパス**
+
+#### 作成ファイル
+- `agent_forge/config.py` - 設定管理モジュール
+- `tests/test_config.py` - Config モジュールテスト（12テスト）
+- `tests/test_cli_init.py` - CLI init コマンドテスト（4テスト）
+
+#### 変更ファイル
+- `agent_forge/cli.py` - 設定統合のため init コマンドを更新
+
+#### テスト結果
 ```
 ============================== 24 passed in 0.15s ===============================
 ```
 
-#### Next Steps
-- Phase 3: Implement session controller with libtmux
-- Implement `forge start` command
+#### 次のステップ
+- Phase 3: libtmux によるセッションコントローラーの実装
+- `forge start` コマンドの実装
 
 ---
 
-### Phase 3: Controller Runtime Implementation (TDD Approach)
-
-#### RED Phase
-- Created `tests/test_actions.py` with communication primitives tests:
-  - `send_command` calls `pane.send_keys()`
-  - `read_output` calls `pane.capture_pane()` with correct parameters
-- Created `tests/test_session.py` with session manager tests:
-  - `get_session` - Find session by name using mock Server
-  - `find_pane` - Find pane by window name (case-insensitive)
-  - `start_forge` - Load workspace with WorkspaceBuilder
-- Created `tests/test_cli_send_read.py` with CLI integration tests:
-  - `send` command integration with session/actions modules
-  - `read` command integration with session/actions modules
-  - `start` command integration with session module
-- Ran tests: FAILED - `ModuleNotFoundError: No module named 'agent_forge.actions'`
-
-#### GREEN Phase
-- Implemented `agent_forge/actions.py`:
-  - `send_command(pane, cmd)` - Wrapper for `pane.send_keys()`
-  - `read_output(pane, lines)` - Wrapper for `pane.capture_pane()`
-- Implemented `agent_forge/session.py`:
-  - `get_session(session_name)` - Get active tmux session by name
-  - `find_pane(session, target_name)` - Find pane by window name (case-insensitive)
-  - `start_forge(config_path, session_name, attach)` - Start session from config using WorkspaceBuilder
-- Updated `agent_forge/cli.py`:
-  - `start` - Integrated with session module, config validation
-  - `send` - Integrated with session/actions modules, error handling
-  - `read` - Integrated with session/actions modules, output formatting
-  - `list` - List active sessions and panes using libtmux.Server
-- Ran tests: **OK - All 44 tests passed**
-
-#### Files Created
-- `agent_forge/actions.py` - Communication primitives (2 functions)
-- `agent_forge/session.py` - Session management (3 functions)
-- `tests/test_actions.py` - Actions tests (5 tests)
-- `tests/test_session.py` - Session tests (6 tests)
-- `tests/test_cli_send_read.py` - CLI integration tests (7 tests)
-
-#### Files Modified
-- `agent_forge/cli.py` - Integrated start/send/read/list commands with session/actions
-
-#### Test Results
-```
-============================== 44 passed in 0.20s ===============================
-```
-
-#### Next Steps
-- Phase 4: Enhance CLI commands (better error handling, options)
-- Phase 5: Agent Skills (MCP tool definitions)
-- Phase 6: Testing & Polish
-
----
-
-### Phase 3: コントローラーランタイム実装 (TDDアプローチ) (Claude)
+### Phase 3: コントローラーランタイム実装 (TDDアプローチ)
 
 #### REDフェーズ
-- 通信プリミティブのテスト `tests/test_actions.py` を作成:
-  - `send_command` が `pane.send_keys()` を呼ぶことを確認
-  - `read_output` が `pane.capture_pane()` を正しいパラメータで呼ぶことを確認
-- セッションマネージャーのテスト `tests/test_session.py` を作成:
-  - `get_session` - モック Server を使ったセッション名検索
+- 通信プリミティブのテストを含む `tests/test_actions.py` を作成:
+  - `send_command` が `pane.send_keys()` を呼ぶ
+  - `read_output` が正しいパラメータで `pane.capture_pane()` を呼ぶ
+- セッションマネージャーのテストを含む `tests/test_session.py` を作成:
+  - `get_session` - モック Server を使用した名前によるセッション検索
   - `find_pane` - ウィンドウ名によるペイン検索（大文字小文字区別なし）
   - `start_forge` - WorkspaceBuilder でのワークスペース読み込み
-- CLI統合テスト `tests/test_cli_send_read.py` を作成:
+- CLI 統合テストを含む `tests/test_cli_send_read.py` を作成:
   - `send` コマンドの session/actions モジュール統合
   - `read` コマンドの session/actions モジュール統合
   - `start` コマンドの session モジュール統合
@@ -198,12 +145,12 @@ Proactively adding dev dependencies prevents test execution errors and aligns wi
 - `agent_forge/session.py` を実装:
   - `get_session(session_name)` - 名前でアクティブな tmux セッションを取得
   - `find_pane(session, target_name)` - ウィンドウ名でペイン検索（大文字小文字区別なし）
-  - `start_forge(config_path, session_name, attach)` - WorkspaceBuilder でセッション起動
+  - `start_forge(config_path, session_name, attach)` - WorkspaceBuilder で設定からセッション起動
 - `agent_forge/cli.py` を更新:
   - `start` - session モジュール統合、設定検証
   - `send` - session/actions モジュール統合、エラーハンドリング
   - `read` - session/actions モジュール統合、出力フォーマット
-  - `list` - libtmux.Server でアクティブセッション一覧
+  - `list` - libtmux.Server でアクティブなセッションとペインを一覧表示
 - テスト実行: **成功 - 全44テストパス**
 
 #### 作成ファイル
@@ -211,7 +158,7 @@ Proactively adding dev dependencies prevents test execution errors and aligns wi
 - `agent_forge/session.py` - セッション管理（3関数）
 - `tests/test_actions.py` - Actions テスト（5テスト）
 - `tests/test_session.py` - Session テスト（6テスト）
-- `tests/test_cli_send_read.py` - CLI統合テスト（7テスト）
+- `tests/test_cli_send_read.py` - CLI 統合テスト（7テスト）
 
 #### 変更ファイル
 - `agent_forge/cli.py` - start/send/read/list コマンドを session/actions と統合
@@ -222,8 +169,8 @@ Proactively adding dev dependencies prevents test execution errors and aligns wi
 ```
 
 #### 次のステップ
-- Phase 4: CLIコマンドの拡張（エラーハンドリング、オプション追加）
-- Phase 5: Agent Skills（MCPツール定義）
+- Phase 4: CLI コマンドの拡張（より良いエラーハンドリング、オプション）
+- Phase 5: Agent Skills（MCP ツール定義）
 - Phase 6: テストと洗練
 
 ---
@@ -315,4 +262,58 @@ Proactively adding dev dependencies prevents test execution errors and aligns wi
 #### 次のステップ
 - Phase 5: Agent Skills（MCPツール定義）
 - Phase 6: テストと洗練
+
+---
+
+## 2026-01-30
+
+### Spec 001: Detailed Session List 実装 (TDDアプローチ)
+
+#### 概要
+Architect (Gemini) からの仕様書 `docs/specs/001-detailed-list.md` に基づき、`forge list` コマンドを表形式出力に強化。
+
+#### REDフェーズ
+- `tests/test_cli_list.py` で list コマンドのテストを作成:
+  - 表形式の出力形式を検証（SESSION, WINDOW, PANE, TITLE, CURRENT CMD）
+  - セッションが存在しない場合の処理
+  - セッションとウィンドウでのグループ化
+- テスト実行: **失敗** - 実装前の期待値
+
+#### GREENフェーズ
+- `agent_forge/cli.py` の list コマンドを再実装:
+  - 表形式出力の実装
+  - libtmux を使用して pane_title, current_command を取得
+  - セッション/ウィンドウでグループ化
+  - セッション名を一度だけ表示（空白で省略）
+- リンター警告の修正:
+  - 未使用変数警告を `_` で明示的に無視
+  - 複数のテストファイルを修正
+- テスト実行: **成功 - 全57テストパス**
+
+#### 作成ファイル
+- `tests/test_cli_list.py` - List コマンドのテスト（3テスト）
+- `docs/specs/001-detailed-list.md` - Spec 001 仕様書
+
+#### 変更ファイル
+- `agent_forge/cli.py` - list コマンドを表形式出力に完全再実装
+- `tests/e2e/test_live_tmux.py` - 未使用変数警告を修正
+- `tests/test_actions.py` - 未使用変数警告を修正
+- `tests/test_session.py` - 未使用変数警告を修正
+- `tests/test_stop.py` - 未使用変数警告を修正
+- `scripts/send.sh` - AGENT_NAME 環境変数のサポート
+
+#### テスト結果
+```
+============================== 57 passed in 0.68s ===============================
+```
+
+#### 実装内容
+1. **表形式出力**: SESSION, WINDOW, PANE, TITLE, CURRENT CMD の列
+2. **グループ化**: セッション → ウィンドウの順でグループ化
+3. **属性取得**: libtmux を使用して pane_title, current_command を取得
+4. **品質向上**: リンター警告をすべて修正
+
+#### エージェント協働
+- Architect (Gemini): 仕様書作成、レビュー
+- Implementer (Claude): 実装、TDD 実行
 
