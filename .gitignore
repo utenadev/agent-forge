@@ -4,3 +4,8 @@ __pycache__/
 venv/
 *.egg-info/
 .coverage
+
+# Subdirectory CLAUDE.md (only keep root)
+agent_forge/CLAUDE.md
+docs/CLAUDE.md
+tests/CLAUDE.md
