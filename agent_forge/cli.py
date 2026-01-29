@@ -1,7 +1,12 @@
 import click
 
 from agent_forge import __version__
-from agent_forge.config import FORGE_CONFIG_FILE, config_exists, write_default_config, load_config
+from agent_forge.config import (
+    FORGE_CONFIG_FILE,
+    config_exists,
+    write_default_config,
+    load_config,
+)
 from agent_forge.session import get_session, find_pane, start_forge, stop_session
 from agent_forge.actions import send_command, read_output
 
@@ -23,7 +28,9 @@ def main():
 def init(force):
     """Initialize a new Forge workspace."""
     if config_exists() and not force:
-        click.echo(f"Error: {FORGE_CONFIG_FILE} already exists. Use --force to overwrite.")
+        click.echo(
+            f"Error: {FORGE_CONFIG_FILE} already exists. Use --force to overwrite."
+        )
         raise click.Abort()
 
     overwrite = force
@@ -71,7 +78,9 @@ def send(target, message):
     session = get_session(session_name)
 
     if not session:
-        click.echo(f"Error: Session '{session_name}' not found. Run 'forge start' first.")
+        click.echo(
+            f"Error: Session '{session_name}' not found. Run 'forge start' first."
+        )
         return 1
 
     pane = find_pane(session, target)
@@ -104,7 +113,9 @@ def read(target, lines):
     session = get_session(session_name)
 
     if not session:
-        click.echo(f"Error: Session '{session_name}' not found. Run 'forge start' first.")
+        click.echo(
+            f"Error: Session '{session_name}' not found. Run 'forge start' first."
+        )
         raise click.Abort()
 
     pane = find_pane(session, target)
@@ -141,10 +152,10 @@ def stop(session_name):
 
 @main.command()
 def list():
-    """List active Forge sessions and panes."""
-    server = None
+    """List active Forge sessions and panes in tabular format."""
     try:
         from libtmux import Server
+
         server = Server()
     except Exception:
         click.echo("Error: Could not connect to tmux server.")
@@ -154,9 +165,43 @@ def list():
         click.echo("No active sessions.")
         return
 
+    # Table headers
+    headers = ["SESSION", "WINDOW", "PANE", "TITLE", "CURRENT CMD"]
+
+    # Calculate column widths
+    session_width = max(len(headers[0]), max(len(s.name) for s in server.sessions))
+    window_width = max(len(headers[1]), 12)  # "1:architect" format
+    pane_width = max(len(headers[2]), 4)  # "%1" format
+    title_width = max(len(headers[3]), 18)
+    cmd_width = max(len(headers[4]), 10)
+
+    # Print header
+    header_format = f"{{:<{session_width}}} {{:<{window_width}}} {{:<{pane_width}}} {{:<{title_width}}} {{:<{cmd_width}}}"
+    click.echo(header_format.format(*headers))
+
+    # Collect and print rows
+    current_session = None
     for session in server.sessions:
-        click.echo(f"Session: {session.name}")
         for window in session.windows:
-            click.echo(f"  Window: {window.window_name}")
-            for i, pane in enumerate(window.panes):
-                click.echo(f"    Pane {i}: {pane}")
+            for pane in window.panes:
+                # Get pane attributes
+                pane_title = getattr(pane, "pane_title", "")
+                current_cmd = getattr(pane, "current_command", "")
+
+                # Format session name (show once per session)
+                session_name = session.name if session.name != current_session else ""
+                current_session = session.name
+
+                # Format window (index:name)
+                window_str = f"{window.window_index}:{window.window_name}"
+
+                # Format pane (%index)
+                pane_str = f"%{pane.pane_index}"
+
+                # Print row
+                row_format = f"{{:<{session_width}}} {{:<{window_width}}} {{:<{pane_width}}} {{:<{title_width}}} {{:<{cmd_width}}}"
+                click.echo(
+                    row_format.format(
+                        session_name, window_str, pane_str, pane_title, current_cmd
+                    )
+                )

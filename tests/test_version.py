@@ -17,5 +17,5 @@ class TestVersion(unittest.TestCase):
             self.assertTrue(part.isdigit())
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

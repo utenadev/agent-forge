@@ -14,19 +14,21 @@ fi
 # Determine Sender Name
 # 1. AGENT_NAME env var
 # 2. pane_title (cleaned up)
-# 3. Default "gemini"
+# 3. Default "unknown"
 if [ -n "$AGENT_NAME" ]; then
     SENDER="$AGENT_NAME"
 else
     RAW_TITLE=$(tmux display-message -p '#{pane_title}')
-    # Simple cleanup: take first word if it looks like a name, else default
-    SENDER="gemini"
+    # Cleanup: Remove emojis and special characters, take the first meaningful word
+    # e.g., "✳ Claude Code" -> "Claude"
+    SENDER=$(echo "$RAW_TITLE" | sed 's/[^a-zA-Z0-9 ]//g' | awk '{print $1}' | tr '[:upper:]' '[:lower:]')
+    
+    if [ -z "$SENDER" ]; then
+        SENDER="unknown"
+    fi
 fi
 
 # Find target pane ID by partial title match
-# Search all panes in current session
-# Output format: %1:My Title
-# We use grep to find the line containing the target string (case insensitive)
 TARGET_INFO=$(tmux list-panes -s -F "#{pane_id}:#{pane_title}" | grep -i "$TARGET" | head -n1)
 TARGET_PANE=$(echo "$TARGET_INFO" | cut -d: -f1)
 TARGET_TITLE=$(echo "$TARGET_INFO" | cut -d: -f2-)
@@ -43,6 +45,6 @@ fi
 # Format: "sender: message"
 FULL_MSG="$SENDER: $MESSAGE"
 
-echo "Sending to '$TARGET_TITLE' ($TARGET_PANE): $FULL_MSG"
+echo "Sending to '$TARGET_TITLE' ($TARGET_PANE) as '$SENDER': $MESSAGE"
 tmux send-keys -t "$TARGET_PANE" "$FULL_MSG"
 tmux send-keys -t "$TARGET_PANE" C-m

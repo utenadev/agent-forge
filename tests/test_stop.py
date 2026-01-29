@@ -13,7 +13,7 @@ class TestStopSession(unittest.TestCase):
         mock_session = MagicMock()
         mock_get_session.return_value = mock_session
 
-        result = stop_session("test-session")
+        _ = stop_session("test-session")
         mock_session.kill.assert_called_once()
 
     @patch("agent_forge.session.get_session")

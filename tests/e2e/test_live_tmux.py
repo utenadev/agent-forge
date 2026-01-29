@@ -1,13 +1,10 @@
 """E2E tests with live tmux sessions."""
 
-import os
-import tempfile
 import unittest
-from pathlib import Path
 
 from libtmux import Server
 
-from agent_forge.session import get_session, find_pane, stop_session
+from agent_forge.session import find_pane, stop_session
 from agent_forge.actions import send_command, read_output
 
 
@@ -21,7 +18,7 @@ class TestLiveTmux(unittest.TestCase):
 
     def tearDown(self):
         """Clean up test session."""
-        session = stop_session(self.session_name)
+        stop_session(self.session_name)
 
     def test_e2e_start_send_read_stop(self):
         """E2E test: create session, send command, read output, stop session."""
@@ -32,11 +29,11 @@ class TestLiveTmux(unittest.TestCase):
         )
 
         # Create windows
-        architect_window = session.new_window(
+        session.new_window(
             window_name="architect",
             attach=False,
         )
-        implementer_window = session.new_window(
+        session.new_window(
             window_name="implementer",
             attach=False,
         )
@@ -53,6 +50,7 @@ class TestLiveTmux(unittest.TestCase):
 
         # 4. Read output (need to wait a bit for command to execute)
         import time
+
         time.sleep(0.5)  # Give tmux time to process the command
 
         output = read_output(pane, lines=100)
@@ -62,8 +60,8 @@ class TestLiveTmux(unittest.TestCase):
         self.assertIn("Hello E2E", output_text)
 
         # 6. Stop session (done in tearDown)
-        session = stop_session(self.session_name)
-        self.assertIsNotNone(session)
+        stopped_session = stop_session(self.session_name)
+        self.assertIsNotNone(stopped_session)
 
     def test_e2e_find_pane_case_insensitive(self):
         """E2E test: find_pane should be case-insensitive."""

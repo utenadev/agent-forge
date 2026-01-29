@@ -24,7 +24,7 @@ class TestReadOutput(unittest.TestCase):
         mock_pane = MagicMock()
         mock_pane.capture_pane.return_value = ["line1", "line2", "line3"]
 
-        result = read_output(mock_pane, lines=100)
+        _ = read_output(mock_pane, lines=100)
         mock_pane.capture_pane.assert_called_once_with(start=-100)
 
     def test_read_output_returns_captured_lines(self):

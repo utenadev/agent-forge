@@ -79,6 +79,7 @@ class TestDefaultConfigStructure(unittest.TestCase):
     def test_default_config_is_valid_yaml(self):
         """Default config should be valid YAML"""
         import yaml
+
         try:
             yaml.safe_load(DEFAULT_FORGE_CONFIG)
         except yaml.YAMLError as e:
@@ -87,6 +88,7 @@ class TestDefaultConfigStructure(unittest.TestCase):
     def test_default_config_has_session_name(self):
         """Default config should have session_name"""
         import yaml
+
         config = yaml.safe_load(DEFAULT_FORGE_CONFIG)
         self.assertIn("session_name", config)
         self.assertIsInstance(config["session_name"], str)
@@ -94,6 +96,7 @@ class TestDefaultConfigStructure(unittest.TestCase):
     def test_default_config_has_windows(self):
         """Default config should have windows array"""
         import yaml
+
         config = yaml.safe_load(DEFAULT_FORGE_CONFIG)
         self.assertIn("windows", config)
         self.assertIsInstance(config["windows"], list)
@@ -101,6 +104,7 @@ class TestDefaultConfigStructure(unittest.TestCase):
     def test_default_config_has_three_panes(self):
         """Default config should have 3 windows (Architect, Implementer, Reviewer)"""
         import yaml
+
         config = yaml.safe_load(DEFAULT_FORGE_CONFIG)
         self.assertEqual(len(config["windows"]), 3)
         window_names = [w.get("window_name") for w in config["windows"]]

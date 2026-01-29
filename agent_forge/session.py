@@ -42,9 +42,7 @@ def find_pane(session: Session, target_name: str) -> Optional[Pane]:
 
 
 def start_forge(
-    config_path: str,
-    session_name: Optional[str] = None,
-    attach: bool = False
+    config_path: str, session_name: Optional[str] = None, attach: bool = False
 ) -> Session:
     """Start a Forge tmux session from a config file.
 

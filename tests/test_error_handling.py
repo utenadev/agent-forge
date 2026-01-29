@@ -35,7 +35,6 @@ class TestErrorHandling(unittest.TestCase):
 
         mock_session.windows = [mock_window1, mock_window2, mock_window3]
 
-        from agent_forge.cli import find_pane
         with patch("agent_forge.cli.find_pane", return_value=None):
             result = self.runner.invoke(main, ["send", "unknown", "test"])
 
@@ -71,7 +70,6 @@ class TestErrorHandling(unittest.TestCase):
 
         mock_session.windows = [mock_window1, mock_window2, mock_window3]
 
-        from agent_forge.cli import find_pane
         with patch("agent_forge.cli.find_pane", return_value=None):
             result = self.runner.invoke(main, ["read", "unknown"])
 

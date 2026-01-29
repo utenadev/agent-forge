@@ -83,7 +83,9 @@ class TestStartForge(unittest.TestCase):
     @patch("agent_forge.session.WorkspaceBuilder")
     @patch("agent_forge.session.yaml.safe_load")
     @patch("builtins.open", new_callable=mock_open)
-    def test_start_forge_loads_workspace(self, mock_file, mock_yaml_load, mock_builder_class):
+    def test_start_forge_loads_workspace(
+        self, mock_file, mock_yaml_load, mock_builder_class
+    ):
         """start_forge should load workspace from config path"""
         config_path = "/path/to/.forge.yaml"
         mock_config = {"session_name": "forge-session", "windows": []}
@@ -97,15 +99,19 @@ class TestStartForge(unittest.TestCase):
 
         with patch("agent_forge.session.Server", return_value=mock_server):
             mock_server.find_where.return_value = mock_session
-            result = start_forge(config_path, attach=False)
+            _ = start_forge(config_path, attach=False)
 
         mock_builder.build.assert_called_once()
-        mock_server.find_where.assert_called_once_with({"session_name": "forge-session"})
+        mock_server.find_where.assert_called_once_with(
+            {"session_name": "forge-session"}
+        )
 
     @patch("agent_forge.session.WorkspaceBuilder")
     @patch("agent_forge.session.yaml.safe_load")
     @patch("builtins.open", new_callable=mock_open)
-    def test_start_forge_with_session_name(self, mock_file, mock_yaml_load, mock_builder_class):
+    def test_start_forge_with_session_name(
+        self, mock_file, mock_yaml_load, mock_builder_class
+    ):
         """start_forge should override session name"""
         config_path = "/path/to/.forge.yaml"
         mock_config = {"session_name": "default-session", "windows": []}
@@ -119,7 +125,7 @@ class TestStartForge(unittest.TestCase):
 
         with patch("agent_forge.session.Server", return_value=mock_server):
             mock_server.find_where.return_value = mock_session
-            result = start_forge(config_path, session_name="my-session", attach=False)
+            _ = start_forge(config_path, session_name="my-session", attach=False)
 
         # Should override session name
         mock_server.find_where.assert_called_once_with({"session_name": "my-session"})

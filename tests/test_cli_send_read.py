@@ -15,7 +15,9 @@ class TestCLISend(unittest.TestCase):
     @patch("agent_forge.cli.find_pane")
     @patch("agent_forge.cli.get_session")
     @patch("agent_forge.cli.load_config")
-    def test_send_command_to_pane(self, mock_load, mock_get_session, mock_find, mock_send):
+    def test_send_command_to_pane(
+        self, mock_load, mock_get_session, mock_find, mock_send
+    ):
         """send command should send command to target pane"""
         mock_load.return_value = {"session_name": "forge-session"}
 
@@ -32,7 +34,9 @@ class TestCLISend(unittest.TestCase):
     @patch("agent_forge.cli.find_pane")
     @patch("agent_forge.cli.get_session")
     @patch("agent_forge.cli.load_config")
-    def test_send_fails_if_session_not_found(self, mock_load, mock_get_session, mock_find):
+    def test_send_fails_if_session_not_found(
+        self, mock_load, mock_get_session, mock_find
+    ):
         """send command should show error and exit gracefully if session not found"""
         mock_load.return_value = {"session_name": "forge-session"}
         mock_get_session.return_value = None
@@ -64,7 +68,9 @@ class TestCLIRead(unittest.TestCase):
     @patch("agent_forge.cli.find_pane")
     @patch("agent_forge.cli.get_session")
     @patch("agent_forge.cli.load_config")
-    def test_read_output_from_pane(self, mock_load, mock_get_session, mock_find, mock_read):
+    def test_read_output_from_pane(
+        self, mock_load, mock_get_session, mock_find, mock_read
+    ):
         """read command should read output from target pane"""
         mock_load.return_value = {"session_name": "forge-session"}
 
@@ -84,7 +90,9 @@ class TestCLIRead(unittest.TestCase):
     @patch("agent_forge.cli.find_pane")
     @patch("agent_forge.cli.get_session")
     @patch("agent_forge.cli.load_config")
-    def test_read_fails_if_session_not_found(self, mock_load, mock_get_session, mock_find):
+    def test_read_fails_if_session_not_found(
+        self, mock_load, mock_get_session, mock_find
+    ):
         """read command should fail if session not found"""
         mock_load.return_value = {"session_name": "forge-session"}
         mock_get_session.return_value = None
