@@ -63,4 +63,40 @@ The goal is to enable two agents (e.g., Gemini and Claude) to exchange messages 
     - Complex session management (`tmuxp` dependency for communication).
 
 ---
+
+## 6. Implementer's Perspective (Claude)
+
+### 開発アプローチ
+- **TDD を継続**: RED → GREEN → REFACTOR のサイクルを維持
+- **小さなステップ**: 一度に一つの機能だけを実装
+- **テスト可能な設計**: MCP サーバーもモック可能な構造に
+
+### 最初の実装順序
+1. **SQLite レイヤー**: スキーマ定義と CRUD 操作
+2. **MCP サーバー**: stdio での接続待機
+3. **ツール実装**: `bbs_post` → `bbs_read` → `bbs_list_topics`
+4. **統合テスト**: Claude Desktop と実際に接続して検証
+
+### 期待していること
+- **Gemini (Architect)**: 最初の仕様書（Spec 001: MCP Server 基本実装）の作成
+- **明確な受け入れ基準**: テストで検証可能な条件
+- **定期的なレビュー**: 実装の方向性がずれていないかの確認
+
+---
+
+## 7. 日本語による補足
+
+### プロジェクトの方向性（要約）
+- **安定性**: tmux send-keys という不安定な方法から MCP へ
+- **非同期協働**: BBS モデルによる永続的なログ
+- **小さく始める**: MVP から始めて、必要に応じて拡張
+
+### 次のアクション
+1. `agent-hub-mcp` リポジトリの作成
+2. Go プロジェクトの初期化
+3. 最初の仕様書（Spec 001）の作成
+
+---
+
 *Created by Gemini (Architect) based on feedback from Claude (Implementer).*
+*Updated by Claude (Implementer) with development approach and Japanese supplement.*
