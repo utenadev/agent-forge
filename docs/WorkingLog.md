@@ -317,3 +317,50 @@ Architect (Gemini) からの仕様書 `docs/specs/001-detailed-list.md` に基�
 - Architect (Gemini): 仕様書作成、レビュー
 - Implementer (Claude): 実装、TDD 実行
 
+---
+
+### ffs.sh 実装 - 人間向け対話型送信ツール
+
+#### 概要
+`send.sh`/`read.sh` は AI Agent 専用だったが、人間（Shogun）が使いやすい fzf ベースのインタラクティブ版を作成。
+
+#### RED フェーズ（設計レビュー）
+- 要件確認: fzf による pane 選択、履歴機能、ブロードキャスト、自己除外
+- 既存スクリプトとの使い分け明確化
+
+#### GREEN フェーズ
+- `scripts/ffs.sh` を実装:
+  - fzf による対話的 pane 選択（session:window.pane | title | cmd 表示）
+  - メッセージ入力も fzf 化（`--print-query` で編集可能）
+  - 履歴機能: 最大12件、重複除去、新しい順に表示
+  - ブロードキャストモード: `-b` フラグで全 pane に送信
+  - 自己除外: 自分自身の pane を送信先リストから除外
+- `scripts/send.sh` および `scripts/read.sh` を改善:
+  - 引数なしで詳細ヘルプ表示（USE CASES 含む）
+  - stderr 出力、終了コード 1 で終了
+
+#### コミット
+```
+1c6d41d feat: add ffs.sh - fzf-based interactive sender for human use
+7b6be2a feat: add comprehensive help messages to send.sh and read.sh
+```
+
+#### 作成ファイル
+- `scripts/ffs.sh` - fzf ベースの対話型送信ツール（220行）
+
+#### 変更ファイル
+- `scripts/send.sh` - 詳細ヘルプ追加、引数なし時の挙動改善
+- `scripts/read.sh` - 詳細ヘルプ追加、引数なし時の挙動改善
+
+#### 使用例
+```bash
+# 対話的に送信（メッセージ入力 fzf → pane 選択 fzf）
+./scripts/ffs.sh
+
+# メッセージ確定済みで pane 選択のみ
+./scripts/ffs.sh "会議始まるよ"
+
+# 全員にブロードキャスト
+./scripts/ffs.sh -b "デプロイ完了"
+```
+

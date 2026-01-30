@@ -5,6 +5,8 @@ venv/
 *.egg-info/
 .coverage
 
+docs/t/
+
 # Subdirectory CLAUDE.md (only keep root)
 agent_forge/CLAUDE.md
 docs/CLAUDE.md
