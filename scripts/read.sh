@@ -1,11 +1,44 @@
 #!/bin/bash
-# Usage: ./read.sh <target_partial_name> [lines]
+#
+# read.sh - Read output from AI agents in tmux panes
+#
 
-TARGET=$1
+show_help() {
+    cat >&2 << 'EOF'
+Usage: read.sh <target_partial_name> [lines]
+
+Read recent output from an AI agent running in another tmux pane.
+Useful for checking what another agent is doing or has completed.
+
+ARGUMENTS:
+  target_partial_name    Partial match of the target pane title
+  lines                  Number of lines to read (default: 20)
+
+USE CASES:
+  1. Check implementer's recent output:
+     read.sh implementer
+
+  2. Read more lines from architect pane:
+     read.sh architect 50
+
+  3. Monitor test results in reviewer pane:
+     read.sh reviewer 100
+
+  4. Quick peek at any agent's current activity:
+     read.sh gemini
+
+NOTES:
+  - Captures the last N lines of the pane's visible content
+  - Preserves colors and escape sequences
+  - Output is printed to stdout
+EOF
+}
+
+TARGET=${1:-}
 LINES=${2:-20}
 
 if [ -z "$TARGET" ]; then
-    echo "Usage: $0 <target_partial_name> [lines]"
+    show_help
     exit 1
 fi
 
